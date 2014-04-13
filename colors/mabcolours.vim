@@ -49,3 +49,13 @@ if has("unix")
   endif
 endif
 
+" My additions...
+" GUI
+highlight FoldColumn     guibg=DarkSlateGray  "Leaving guifg as the default which is Cyan
+highlight StatusLine     gui=NONE guifg=Yellow  guibg=DarkSlateGray
+highlight StatusLineNC   gui=NONE guifg=Black  guibg=DarkSlateGray
+" The old settings...
+" StatusLine     xxx term=bold,reverse cterm=bold,reverse ctermfg=9 ctermbg=15 gui=bold,reverse guifg=blue
+"                    guibg=white
+
+

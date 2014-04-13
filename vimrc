@@ -7,11 +7,12 @@
 call pathogen#infect() 
 
 set viminfo='10,<50,s10,h,rA:,rB:,!
-" I'm setting cpoptions explicitly, even though it's currently the default.  I may want
-" to make changes to this sooner or later.
-" I'm currently trusting Vim options but as I said, I may want to change it later.
+" I'm setting cpoptions explicitly
 " Don't set compatible again or cpoptions will be overwritten.
-set cpoptions=aABceFs
+" The default setting would be... set cpoptions=aABceFs
+" I like the Vi undo.  I rarely need to go back more than one level and this way
+" I can see my last change flash on the screen.
+set cpoptions=uaABceFs
 filetype on "This allows vim to recognise the filetype when loading a file
 set laststatus=2
 set statusline=%6y " Filetype
@@ -36,11 +37,18 @@ set shiftwidth=4  "This is used for folding too.  4 is very typical for programm
 set foldcolumn=4  "I'm showing this column for a while, I want to see if it's useful.  I suspect it isn't though
 set colorcolumn=80
 
-nnoremap , <Nop>
+"My maps.  I put them all here so that I can see them all when editing them.  {{{
+noremap , <Nop>
 let mapleader=","
-"My maps
-nnoremap <leader>ev :new $MYVIMRC<cr>
-nnoremap <leader>sv :source $MYVIMRC<cr>
+nnoremap <leader>ve :new $MYVIMRC<cr>
+nnoremap <leader>vs :source $MYVIMRC<cr>
+nnoremap <silent> <leader>en :call ListEnv()<CR>
+" Hitting <c-w> for window movements is clumsy and I remap them 
+nnoremap <leader>j <c-w>j
+nnoremap <leader>k <c-w>k
+nnoremap <leader>h <c-w>h
+nnoremap <leader>l <c-w>l
+" }}}
 
 " All my autocommands.  Put them in this group to stop duplication. {{{
 augroup allmyautocommands
@@ -50,6 +58,24 @@ augroup allmyautocommands
     autocmd FileType vim setlocal foldmethod=marker
 augroup END
 " }}}
+
+
+" Functions to get a list of environment variables  {{{
+function! Env()
+    silent execute "normal! :return $\<C-a>')\<C-b>\<C-right>\<Right>\<Del>split('\<CR>"
+endfunction "Env
+
+function! ListEnv()
+  let l:envlist = Env()
+  echo " "
+  for l:item in l:envlist
+    let l:value='$'.l:item
+    echo printf('%-30s %s', l:item , eval(l:value))
+  endfor
+endfunction "ListEnv
+" }}}
+
+
 
 " set lines=50 columns=100
 " winpos 50 0

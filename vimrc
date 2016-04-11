@@ -30,6 +30,7 @@ set statusline+=\ " Add a space
 
 set nobackup  "I hate those ugly ~ files.  I don't save anything unless I really want it.
 colorscheme mabcolours  " Adapted from torte
+syntax on
 set ignorecase
 set nowrapscan
 set number
@@ -37,25 +38,69 @@ set shiftwidth=4  "This is used for folding too.  4 is very typical for programm
 set foldcolumn=4  "I'm showing this column for a while, I want to see if it's useful.  I suspect it isn't though
 set colorcolumn=80
 
+" Add the html tag delimeters to the matchpairs list.  I could maybe change this later so it only does it in html or xml files
+set matchpairs+=<:>
+
+" Using \tmp as temporary directory.  This way if I'm working on a memory stick I don't bother the host computer
+let $TMP="\\tmp"
+if !isdirectory($TMP)
+    if exists("*mkdir")
+	call mkdir($TMP,'p')
+	echo "Created directory: " . $TMP
+    else
+        echoerr "Please create directory: " . $TMP
+    endif
+endif
+
+
 "My maps.  I put them all here so that I can see them all when editing them.  {{{
 noremap , <Nop>
 let mapleader=","
 nnoremap <leader>ve :new $MYVIMRC<cr>
 nnoremap <leader>vs :source $MYVIMRC<cr>
 nnoremap <silent> <leader>en :call ListEnv()<CR>
+
 " Hitting <c-w> for window movements is clumsy and I remap them 
 nnoremap <leader>j <c-w>j
 nnoremap <leader>k <c-w>k
 nnoremap <leader>h <c-w>h
 nnoremap <leader>l <c-w>l
+
+" The following are for commenting out code
+"cx is for "comment xml"
+nnoremap <leader>cx 0i<!-- <esc>f<%a<cr>--><esc>
+
+" These next maps call functions defined in pathogen
+" Whilst the pathogen functions should be fully self contained, at the same time
+" I want to be able to see all my maps here rather than hunt through pathogen
+" directories.
+nnoremap <silent> <leader>p  :silent call Rerun_last_ex_command_and_put()<cr>
 " }}}
 
 " All my autocommands.  Put them in this group to stop duplication. {{{
 augroup allmyautocommands
+"The problem is autocommands run again on every load.
 "This is the reason for grouping, it will stop duplicates.
-  autocmd! 
+" Next command removes ALL autocommands for the current group
+  autocmd!
   autocmd VimEnter * :echom "MAB was here."
-    autocmd FileType vim setlocal foldmethod=marker
+  autocmd FileType vim setlocal foldmethod=marker
+"Next is the syntax highlighting.  Mostly I like it off but sometimes I want it on
+"Bloody vim has an :ownsyntax command, but you can't switch it on if syntax is
+"generally switched off.  So annoying.  Basically ':syntax off' means that it's
+"switched off and that's it...you can't then use ':ownsyntax on' on a buffer
+"that you particularly want the highlighting to show.
+"So what I'm doing is switching syntax on generally, and then switching it off
+"in every other window, unless I later deliberately switch it on again.
+"Note that :ownsyntax belongs to a window and not a buffer.  That's why I use
+"BufWinEnter.  Note also that :syntax on belongs to the whole of vim (not just a
+"buffer or window)
+  autocmd BufWinEnter * :ownsyntax off
+  autocmd BufWinEnter *.vim :ownsyntax on
+  autocmd BufWinEnter vimrc :ownsyntax on
+  autocmd BufWinEnter MikeyBackup.wxs :ownsyntax on
+" This just temporarily while I muck around with this file
+"  autocmd BufNewFile,BufRead MikeyBackup.wxs :ownsyntax on
 augroup END
 " }}}
 
@@ -138,4 +183,7 @@ if has("gui_running")
     autocmd VimLeavePre * if g:restore_screen_size_pos == 1 | call Screen_get() | endif
 endif
 " }}}
+
+" gui		" open window and set default for 'background'
+" Not using this I think... syntax on	" start highlighting, use 'background' to set colors
 

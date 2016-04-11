@@ -22,4 +22,3 @@ function! Rerun_last_ex_command_and_put()
   put=l:temp
 endfunction
 
-nnoremap <silent> <leader>p  :silent call Rerun_last_ex_command_and_put()<cr>

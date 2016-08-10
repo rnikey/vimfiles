@@ -1,10 +1,21 @@
-" This initialisation file is now backed up using git.  I will hopefully get it on
-" Github soon so I should never lose it again.  That will be handy!
+" This initialisation file is now backed up using git.
+" Please push changes to Github periodically.
+
+" When                  Who             What
+" ----------------      --------------  ---------------------------------------
+" 10th August 2016	Michael Bihari	Added functions to display character lists
+" 10th August 2016	Michael Bihari	Set encoding to UTF8 for all files as 
+"                                       recommended by Vim creators.
 
 " I'm using a utility called pathogen and all plugins go into the "bundle"
 " directory.  This way I don't have to worry about deleted files, if a 
 " plugin gets updated I simply install a whole new directory.
+" Modification History
+
+
 call pathogen#infect() 
+
+set encoding=UTF8 " This is recommended by VIM authors.  Just remember it's no longer a single byte editor
 
 set viminfo='10,<50,s10,h,rA:,rB:,!
 " I'm setting cpoptions explicitly
@@ -83,7 +94,7 @@ augroup allmyautocommands
 "This is the reason for grouping, it will stop duplicates.
 " Next command removes ALL autocommands for the current group
   autocmd!
-  autocmd VimEnter * :echom "MAB was here."
+  autocmd VimEnter * :echom "MAB was here >^.^<"
   autocmd FileType vim setlocal foldmethod=marker
 "Next is the syntax highlighting.  Mostly I like it off but sometimes I want it on
 "Bloody vim has an :ownsyntax command, but you can't switch it on if syntax is
@@ -120,6 +131,23 @@ function! ListEnv()
 endfunction "ListEnv
 " }}}
 
+" Functions to display character lists {{{
+function! GenerateASCIICharacters(how_many_characters)
+  let a=range(0, a:how_many_characters)
+  for i in a
+    put=i . \"\t\" . printf(\"%c\", i)
+  endfor
+endfunction
+
+function! GenerateUTF8Characters(how_many_characters)
+  let a=range(0, a:how_many_characters)
+  for i in a
+    let icommand='0i' . i . "\t" . 'u' . printf("%04x", i) . "\n" . ''
+    execute "normal " . icommand
+  endfor
+endfunction
+
+" }}}
 
 
 " set lines=50 columns=100
